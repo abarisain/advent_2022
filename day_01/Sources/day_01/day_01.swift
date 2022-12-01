@@ -35,8 +35,11 @@ public struct day_01 {
             return elves
         }
         
-        let max = reduced.sorted(by: >).first!
+        let sorted = reduced.sorted(by: >)
         
-        print("Done: \(max)")
+        let max = sorted.first!
+        let top3 = sorted[0] + sorted[1] + sorted[2]
+        
+        print("Done! Max: \(max), sum of top 3: \(top3)")
     }
 }
