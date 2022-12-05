@@ -7,10 +7,13 @@
 
 import Foundation
 
+var useSampleInput = false
+
 func makeSourceDataURL() -> URL {
     let sourcePath = #file
     let rootDir = sourcePath.split(separator: "/Sources")[0]
-    let path = "file://\(rootDir)/input.txt"
+    let inputFile = useSampleInput ? "sample_input.txt" : "input.txt"
+    let path = "file://\(rootDir)/\(inputFile)"
     return URL(string: path)!
 }
 
