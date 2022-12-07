@@ -7,7 +7,11 @@
 
 import Foundation
 
-var useSampleInput = false
+var useSampleInput = false {
+    didSet {
+        input = getChallengeInput()
+    }
+}
 
 func makeSourceDataURL() -> URL {
     let sourcePath = #file
