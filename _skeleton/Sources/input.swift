@@ -25,4 +25,4 @@ func getChallengeInput() -> String {
     return try! String(contentsOf: makeSourceDataURL(), encoding: .utf8)
 }
 
-let input = getChallengeInput()
+var input = getChallengeInput()
