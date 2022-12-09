@@ -68,9 +68,9 @@ func run2() {
                     ropeFragments[i].move(trailingMove)
                 }
             }
-            printBoard2()
-            print("4: \(String(describing: ropeFragments[3])), 5: \(String(describing: ropeFragments[4]))")
-            print(" ")
+            if verbose {
+                printBoard2()
+            }
             visitedPositions.insert(ropeFragments.last!)
         }
     }
