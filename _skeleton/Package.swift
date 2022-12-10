@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let day = "03"
+let day = "10"
 
 let package = Package(
     name: "day\(day)",
