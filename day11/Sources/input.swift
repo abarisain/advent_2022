@@ -15,10 +15,10 @@ var useSampleInput = false {
 
 func makeSourceDataURL() -> URL {
     let sourcePath = #file
-    let rootDir = sourcePath.split(separator: "/Sources")[0]
+    let rootDir = sourcePath.split(separator: "Sources")[0]
     let inputFile = useSampleInput ? "sample_input.txt" : "input.txt"
-    let path = "file://\(rootDir)/\(inputFile)"
-    return URL(string: path)!
+    let path = "\(rootDir)/\(inputFile)"
+    return URL(fileURLWithPath: path)
 }
 
 func getChallengeInput() -> String {
