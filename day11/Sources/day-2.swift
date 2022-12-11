@@ -16,13 +16,13 @@ func run2() {
     
     var monkeys = parseMonkeys()
     
-    for round in 1...2000 {
+    for round in 1...10000 {
         monkeys.indices.forEach { i in
             var monkey = monkeys[i]
             while !monkey.isTurnFinished {
                 let readonlyMonkey = monkey
                 let (targetMonkey, item) = monkey.performTurnStep { worry in
-                    return worry / 3
+                    return worry
                 }
                 monkeys[targetMonkey].take(item: item)
             }

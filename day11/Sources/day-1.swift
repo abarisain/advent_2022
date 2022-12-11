@@ -1,13 +1,14 @@
 import Foundation
 import Collections
+import BigInt
 
 enum Operand {
     case old
-    case value(Int)
+    case value(BigUInt)
 }
 
 struct Operation {
-    typealias Operator = (Int, Int) -> Int
+    typealias Operator = (BigUInt, BigUInt) -> BigUInt
     
     let leftOperand: Operand
     let rightOperand: Operand
@@ -19,13 +20,13 @@ struct Operation {
         self.operation = operation
     }
     
-    func perform(old: Int) -> Int {
+    func perform(old: BigUInt) -> BigUInt {
         let left = unwrapOperand(leftOperand, old: old)
         let right = unwrapOperand(rightOperand, old: old)
         return operation(left, right)
     }
     
-    private func unwrapOperand(_ operand: Operand, old: Int) -> Int {
+    private func unwrapOperand(_ operand: Operand, old: BigUInt) -> BigUInt {
         switch operand {
             case .old:
                 return old
@@ -36,9 +37,9 @@ struct Operation {
 }
 
 struct Test {
-    let value: Int
+    let value: BigUInt
     
-    func test(against: Int) -> Bool {
+    func test(against: BigUInt) -> Bool {
         return against % value == 0
     }
 }
@@ -46,7 +47,7 @@ struct Test {
 typealias MonkeyID = Int
 
 struct Monkey {
-    typealias Item = Int
+    typealias Item = BigUInt
     
     var items: Deque<Item>
     var operation: Operation
@@ -61,14 +62,14 @@ struct Monkey {
     }
     
     // Performs the turn and returns what item to throw to whom
-    mutating func performTurnStep(worryMitigation: (Int) -> Int) -> (MonkeyID, Item) {
+    mutating func performTurnStep(worryMitigation: (BigUInt) -> BigUInt) -> (MonkeyID, Item) {
         if items.isEmpty {
             fatalError("Monkey cannot perform turn step with no item")
         }
         let item = items.removeFirst()
         inspectedItems += 1
         
-        var worry: Int = item
+        var worry: BigUInt = item
         worry = operation.perform(old: worry)
         
         worry = worryMitigation(worry)
@@ -93,7 +94,7 @@ struct Monkey {
 extension Test {
     static func from(_ input: Substring) -> Test {
         let split = input.split(separator: "by ")
-        return Test(value: Int(split[1])!)
+        return Test(value: BigUInt(split[1])!)
     }
 }
 
@@ -102,7 +103,7 @@ extension Operand {
         if input == "old" {
             return .old
         }
-        return .value(Int(input)!)
+        return .value(BigUInt(input)!)
     }
 }
 
@@ -163,7 +164,7 @@ func parseMonkeys() -> [Monkey] {
 }
 
 func run1() {
-    useSampleInput = false
+    useSampleInput = true
     print("1:")
     
     var monkeys = parseMonkeys()
