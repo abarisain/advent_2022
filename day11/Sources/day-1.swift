@@ -61,7 +61,7 @@ struct Monkey {
     }
     
     // Performs the turn and returns what item to throw to whom
-    mutating func performTurnStep() -> (MonkeyID, Item) {
+    mutating func performTurnStep(worryMitigation: (Int) -> Int) -> (MonkeyID, Item) {
         if items.isEmpty {
             fatalError("Monkey cannot perform turn step with no item")
         }
@@ -71,9 +71,7 @@ struct Monkey {
         var worry: Int = item
         worry = operation.perform(old: worry)
         
-        // Monkey gets bored
-        // No need to floor: int division returns a floored int
-        worry = worry / 3
+        worry = worryMitigation(worry)
         
         let monkeyToThrowTo: MonkeyID
         if test.test(against: worry) {
@@ -175,7 +173,11 @@ func run1() {
         monkeys.indices.forEach { i in
             var monkey = monkeys[i]
             while !monkey.isTurnFinished {
-                let (targetMonkey, item) = monkey.performTurnStep()
+                let (targetMonkey, item) = monkey.performTurnStep { worry in
+                    // Monkey gets bored
+                    // No need to floor: int division returns a floored int
+                    return worry / 3
+                }
                 monkeys[targetMonkey].take(item: item)
             }
             monkeys[i] = monkey
