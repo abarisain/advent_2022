@@ -28,6 +28,7 @@ func run2() {
             }
             monkeys[i] = monkey
         }
+        print("Round \(round)")
         if round == 1 || round == 20 || round == 1000 || round == 2000 {
             printInspectedItems(round: round, monkeys: monkeys)
         }
