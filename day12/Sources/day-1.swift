@@ -52,15 +52,28 @@ class Node: Hashable {
 class PathFinder {
     var unvisitedPositions: Set<Position>
     var allNodes = [Position: Node]()
-    let start: Position
+    var start: Position
     let destination: Position
     let gridHeight: Int
     let gridWidth: Int
     
-    init(nodes: [Position: Node], gridHeight: Int, gridWidth: Int) {
-        allNodes = nodes
-        self.gridHeight = gridHeight
-        self.gridWidth = gridWidth
+    init(input: String) {
+        var tmpNodes = [Position: Node]()
+        
+        let lines = input.split(separator: "\n").map { line in
+            line.map { MapItem.from(input: $0) }
+        }
+        lines.indices.forEach { row in
+            let line = lines[row]
+            line.indices.forEach { column in
+                let position = Position(row: row, column: column)
+                tmpNodes[position] = Node(item: line[column], position: position)
+            }
+        }
+        
+        allNodes = tmpNodes
+        self.gridHeight = lines.count
+        self.gridWidth = lines[0].count
         start = allNodes.values.filter { $0.item.isStart }.first!.position
         destination = allNodes.values.filter { $0.item.isBestSignalLocation }.first!.position
         unvisitedPositions = Set()
@@ -79,23 +92,6 @@ class PathFinder {
         }
     }
     
-    static func from(input: String) -> PathFinder {
-        var tmpNodes = [Position: Node]()
-        
-        let lines = input.split(separator: "\n").map { line in
-            line.map { MapItem.from(input: $0) }
-        }
-        lines.indices.forEach { row in
-            let line = lines[row]
-            line.indices.forEach { column in
-                let position = Position(row: row, column: column)
-                tmpNodes[position] = Node(item: line[column], position: position)
-            }
-        }
-        
-        return PathFinder(nodes: tmpNodes, gridHeight: lines.count, gridWidth: lines[0].count)
-    }
-    
     func printGrid() {
         print("")
         for row in 0..<gridHeight {
@@ -107,11 +103,7 @@ class PathFinder {
         }
         print("")
     }
-}
-
-//MARK: Algorithm
-
-extension PathFinder {
+    
     func unvisitedNeighbors(for root: Position) -> [Position] {
         var out = [Position]()
         for rowOffset in -1...1 {
@@ -148,7 +140,7 @@ extension PathFinder {
             // Filter out neightbors that we can't climb to
             let neighbors = unvisitedNeighbors(for: currentNode.position)
                 .map { allNodes[$0]! }
-                .filter { $0.item.height <= (currentNode.item.height + 1) }
+                .filter { canReach(node: $0, from: currentNode) }
             for neighbor in neighbors {
                 if currentNode.tentativeDistance < Int.max {
                     let newTentativeDistance = currentNode.tentativeDistance + 1
@@ -158,13 +150,21 @@ extension PathFinder {
             unvisitedPositions.remove(currentNode.position)
             
             // Did we just visit the target node
-            if currentNode.item.isBestSignalLocation {
-                print("Visited best signal! Distance: \(currentNode.tentativeDistance)")
+            if reachedDestination(currentNode: currentNode) {
+                print("Got to destination! Distance: \(currentNode.tentativeDistance)")
                 print("Unvisited squares: \(unvisitedPositions.count)")
                 return currentNode.tentativeDistance
             }
         }
         
+    }
+    
+    func canReach(node: Node, from: Node) -> Bool {
+        return node.item.height <= (from.item.height + 1)
+    }
+    
+    func reachedDestination(currentNode: Node) -> Bool {
+        return currentNode.position == destination
     }
 }
 
@@ -172,7 +172,7 @@ func run1() {
     useSampleInput = false
     print("1:")
        
-    let pathFinder = PathFinder.from(input: input)
+    let pathFinder = PathFinder(input: input)
     //pathFinder.printGrid()
     let answer = pathFinder.walk()
     
