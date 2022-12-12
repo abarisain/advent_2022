@@ -16,19 +16,21 @@ func run2() {
     
     var monkeys = parseMonkeys()
     
+    let maxDividor = monkeys.map { $0.test.value }.reduce(1, *)
+    
     for round in 1...10000 {
         monkeys.indices.forEach { i in
             var monkey = monkeys[i]
             while !monkey.isTurnFinished {
                 let readonlyMonkey = monkey
                 let (targetMonkey, item) = monkey.performTurnStep { worry in
-                    return worry
+                    return worry % maxDividor
                 }
                 monkeys[targetMonkey].take(item: item)
             }
             monkeys[i] = monkey
         }
-        print("Round \(round)")
+        //print("Round \(round)")
         if round == 1 || round == 20 || round == 1000 || round == 2000 {
             printInspectedItems(round: round, monkeys: monkeys)
         }
