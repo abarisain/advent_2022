@@ -68,7 +68,11 @@ class NestedPacketData: PacketData {
                 return .orderedDescending
             }
         }
-        return .orderedAscending
+        if packets.count == rightPackets.count {
+            return .orderedSame
+        } else {
+            return .orderedAscending
+        }
     }
     
     var description: String {
