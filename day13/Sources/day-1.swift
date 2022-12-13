@@ -138,7 +138,7 @@ func run1() {
             }
     }
     
-    //pairs.forEach { print($0) }
+    //pairs.forEach { print("\($0[0])\n\($0[1])\n") }
     
     let comparedPairs = pairs.map { $0[0].isOrdered(comparedTo: $0[1]) == .orderedAscending }
     
